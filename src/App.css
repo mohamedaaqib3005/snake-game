@@ -15,6 +15,6 @@
   background-color: #dddcdc;
 }
 
-.active {
-  background-color: #000;
+.cell.snake {
+  background-color: green;
 }
