@@ -18,12 +18,15 @@ const DIRECTIONS = {
 function App() {
   const [snake, setSnake] = useState(INITIAL_SNAKE);
   const [direction, setDirection] = useState('ArrowRight');
-  const directionRef = useRef(direction);
-  directionRef.current = direction;
+  // const directionRef = useRef(direction);
+  // directionRef.current = direction;
+  const [food, setFood] = useState([4, 6]);
 
   const isSnakeCell = (row, col) =>
     snake.some(([r, c]) => r === row && c === col);
 
+  const isFoodCell = (row, col) =>
+    food[0] == row && food[1] === col;
 
   useEffect(() => {
     const handleKey = (e) => {
@@ -52,9 +55,10 @@ function App() {
 
   useEffect(() => {
     const interval = setInterval(() => {
+
       setSnake((prev) => {
         const [headRow, headCol] = prev[0];
-        const [dRow, dCol] = DIRECTIONS[directionRef.current];
+        const [dRow, dCol] = DIRECTIONS[direction];
         let newRow = headRow + dRow;
         let newCol = headCol + dCol;
 
@@ -65,12 +69,33 @@ function App() {
         if (newCol >= GRID_SIZE) newCol = 0;
 
         const newHead = [newRow, newCol];
-        return [newHead, ...prev.slice(0, -1)];
+        const hasEaten = food[0] === newRow && food[1] === newCol;
+
+
+        const newSnake = hasEaten
+          ? [newHead, ...prev]
+          : [newHead, ...prev.slice(0, -1)];
+
+
+        if (hasEaten) {
+          let newFood;
+          do {
+            newFood = [
+              Math.floor(Math.random() * GRID_SIZE),
+              Math.floor(Math.random() * GRID_SIZE),
+            ];
+          } while (
+            newSnake.some(([r, c]) => r === newFood[0] && c === newFood[1])
+          );
+          setFood(newFood);
+        }
+
+        return newSnake;
       });
     }, 300);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [direction]);
 
   return (
     <div id="grid">
@@ -78,12 +103,20 @@ function App() {
         [...Array(GRID_SIZE)].map((_, col) => (
           <div
             key={`${row}-${col}`}
-            className={`cell ${isSnakeCell(row, col) ? 'snake' : ''}`}
+            className={`cell ${isSnakeCell(row, col)
+              ? 'snake'
+              : isFoodCell(row, col)
+                ? 'food'
+                : ''
+              }`}
+
           ></div>
         ))
       )}
+
     </div>
   );
 }
 
 export default App;
+

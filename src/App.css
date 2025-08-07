@@ -5,16 +5,23 @@
   gap: 1px;
   width: 90vmin;
   height: 90vmin;
-  margin: 20px auto;
+  margin: 10vmin auto;
   background: #333;
 }
 
 .cell {
-  width: 100%;
+  width: 100%;  
+  /* not applicable for block elements */
   aspect-ratio: 1;
   background-color: #dddcdc;
 }
 
 .cell.snake {
   background-color: green;
+}
+
+
+
+.cell.food {
+  background-color: red;
 }
