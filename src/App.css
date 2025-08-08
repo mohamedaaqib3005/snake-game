@@ -10,7 +10,7 @@
 }
 
 .cell {
-  width: 100%;  
+  width: 100%;
   /* not applicable for block elements */
   aspect-ratio: 1;
   background-color: #dddcdc;
@@ -20,8 +20,18 @@
   background-color: green;
 }
 
-
-
 .cell.food {
   background-color: red;
+}
+
+.game-over {
+  color: red;
+  font-size: 32px;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 10px;
+}
+
+h2 {
+  text-align: center;
 }

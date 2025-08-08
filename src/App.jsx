@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 
 const GRID_SIZE = 10;
@@ -21,6 +21,8 @@ function App() {
   // const directionRef = useRef(direction);
   // directionRef.current = direction;
   const [food, setFood] = useState([4, 6]);
+  const [gameover, setGameover] = useState(false);
+  const [score, setscore] = useState(0);
 
   const isSnakeCell = (row, col) =>
     snake.some(([r, c]) => r === row && c === col);
@@ -76,8 +78,17 @@ function App() {
           ? [newHead, ...prev]
           : [newHead, ...prev.slice(0, -1)];
 
+        const body = prev.slice(0);
 
+        if (body.some(([r, c]) => r === newRow && c === newCol)) {
+
+          setGameover(true);
+          return prev
+
+
+        }
         if (hasEaten) {
+          setscore((prevScore) => prevScore + 1)
           let newFood;
           do {
             newFood = [
@@ -98,22 +109,27 @@ function App() {
   }, [direction]);
 
   return (
-    <div id="grid">
-      {[...Array(GRID_SIZE)].map((_, row) =>
-        [...Array(GRID_SIZE)].map((_, col) => (
-          <div
-            key={`${row}-${col}`}
-            className={`cell ${isSnakeCell(row, col)
-              ? 'snake'
-              : isFoodCell(row, col)
-                ? 'food'
-                : ''
-              }`}
+    <div className="game-container">
+      <h2>Score: {score}</h2>
+      <div id="grid">
+        {[...Array(GRID_SIZE)].map((_, row) =>
+          [...Array(GRID_SIZE)].map((_, col) => (
+            <div
+              key={`${row}-${col}`}
+              className={`cell ${isSnakeCell(row, col)
+                ? 'snake'
+                : isFoodCell(row, col)
+                  ? 'food'
+                  : ''
+                }`}
 
-          ></div>
-        ))
-      )}
+            ></div>
+          ))
+        )}
 
+        {gameover && <div className="game-over">Game Over</div>}
+
+      </div>
     </div>
   );
 }
