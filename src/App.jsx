@@ -1,11 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
+import Modal from './Components/Modal';
+import LeaderBoardModal from "./Components/LeaderBoard";
+
+import { saveLastScore, saveHighestScore, saveToLeaderboard } from "./Components/LeaderBoardStore";
+
 
 const GRID_SIZE = 10;
 const INITIAL_SNAKE = [
-  [5, 4], // head
-  [5, 3],
-  [5, 2], // tail
+  [4, 4], // head
+  [4, 3],
+  [4, 2], // tail
 ];
 
 const DIRECTIONS = {
@@ -23,6 +28,8 @@ function App() {
   const [food, setFood] = useState([4, 6]);
   const [gameover, setGameover] = useState(false);
   const [score, setscore] = useState(0);
+
+  const [isLeaderboardOpen, setIsLeaderboardOpen] = useState(false);
 
   const isSnakeCell = (row, col) =>
     snake.some(([r, c]) => r === row && c === col);
@@ -48,16 +55,22 @@ function App() {
         return;
       }
 
-      setDirection(newDir);
+      setDirection((prevDir) =>
+        prevDir !== newDir ? newDir : prevDir
+      );
     };
+
 
     window.addEventListener('keydown', handleKey);
     return () => window.removeEventListener('keydown', handleKey);
   }, [snake]);
 
   useEffect(() => {
+    console.log("direc")
     const interval = setInterval(() => {
 
+      if (gameover) return;
+      console.log("prev")
       setSnake((prev) => {
         const [headRow, headCol] = prev[0];
         const [dRow, dCol] = DIRECTIONS[direction];
@@ -78,17 +91,11 @@ function App() {
           ? [newHead, ...prev]
           : [newHead, ...prev.slice(0, -1)];
 
-        const body = prev.slice(0);
-
-        if (body.some(([r, c]) => r === newRow && c === newCol)) {
-
-          setGameover(true);
-          return prev
-
-
-        }
         if (hasEaten) {
-          setscore((prevScore) => prevScore + 1)
+          setscore((prevScore) => {
+            console.log(prevScore);
+            return prevScore + 1;
+          })
           let newFood;
           do {
             newFood = [
@@ -96,10 +103,28 @@ function App() {
               Math.floor(Math.random() * GRID_SIZE),
             ];
           } while (
-            newSnake.some(([r, c]) => r === newFood[0] && c === newFood[1])
+            newSnake.some(([row, col]) => row === newFood[0] && col === newFood[1])
           );
           setFood(newFood);
         }
+
+        const body = prev.slice(1);
+
+        if (body.some(([r, c]) => r === newRow && c === newCol)) {
+
+          setGameover(true);
+
+
+          saveLastScore(score);
+          saveHighestScore(score);
+          saveToLeaderboard("Player", score);
+
+          setIsLeaderboardOpen(true);
+
+          return prev;
+
+        }
+
 
         return newSnake;
       });
@@ -127,12 +152,36 @@ function App() {
           ))
         )}
 
-        {gameover && <div className="game-over">Game Over</div>}
-
       </div>
+      {gameover && (
+        <LeaderBoardModal
+          isOpen={isLeaderboardOpen}
+          onPlayAgain={() => {
+            setSnake(INITIAL_SNAKE);
+            setDirection("ArrowRight");
+            setFood([4, 6]);
+            setscore(0);
+            setGameover(false);
+            setIsLeaderboardOpen(false);
+          }}
+        />
+      )}
+
+
+      <LeaderBoardModal
+        isOpen={isLeaderboardOpen}
+        onPlayAgain={() => {
+          setSnake(INITIAL_SNAKE);
+          setDirection("ArrowRight");
+          setFood([4, 6]);
+          setscore(0);
+          setGameover(false);
+          setIsLeaderboardOpen(false);
+        }}
+      />
+
     </div>
   );
 }
 
 export default App;
-
