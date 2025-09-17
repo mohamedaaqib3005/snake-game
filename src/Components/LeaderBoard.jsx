@@ -1,28 +1,17 @@
-import React, { useEffect, useState } from "react";
-import {
-  loadLastScore,
-  loadHighestScore,
-  loadLeaderboard
-} from "./LeaderBoardStore";
-
-import "../styles/LeaderBoard.css"
+// custom hook 
+// dont store derived state in use effect
+// xstate 
+// grokking simplicity 
+// project react cosden solutions
+// use debugger not console.log console debug console.info 
+// https://overreacted.io/
+// src/Components/LeaderBoard.jsx
+import React from "react";
+import { useSelector } from "react-redux";
+import "../styles/LeaderBoard.css";
 
 function LeaderboardModal({ isOpen, onPlayAgain }) {
-  const [yourScore, setYourScore] = useState(0);
-  const [highestScore, setHighestScore] = useState(0);
-  const [leaderboard, setLeaderboard] = useState([]);
-
-  useEffect(() => {
-    if (!isOpen) return;
-
-    const last = loadLastScore();
-    const high = loadHighestScore();
-    const board = loadLeaderboard();
-
-    setYourScore(last);
-    setHighestScore(high);
-    setLeaderboard(board);
-  }, [isOpen]);
+  const { lastScore, highestScore, leaderboard } = useSelector(state => state.leaderboard);
 
   if (!isOpen) return null;
 
@@ -30,10 +19,9 @@ function LeaderboardModal({ isOpen, onPlayAgain }) {
     <div className="modal-backdrop">
       <div className="modal">
         <h2 style={{ color: "red" }}>Game Over</h2>
-        <p>Your Score: {yourScore}</p>
+        <p>Your Score: {lastScore}</p>
         <p>Highest Score: {highestScore}</p>
-
-        <h3>Leaderboard</h3>
+         <h3>Leaderboard</h3>
         <ol>
           {leaderboard.map((entry, index) => (
             <li key={index}>
@@ -49,3 +37,9 @@ function LeaderboardModal({ isOpen, onPlayAgain }) {
 }
 
 export default LeaderboardModal;
+
+       
+
+
+       
+

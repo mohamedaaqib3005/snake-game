@@ -1,3 +1,9 @@
+// utils 
+// how to inject env variables in vite 
+// react project 
+// atomic design philosophy 
+// logic code can be written in custom hook
+// A finite state machine
 
 const LAST_SCORE_KEY = "lastScore";
 const HIGH_SCORE_KEY = "highestScore";
@@ -33,7 +39,6 @@ export function saveToLeaderboard(name, score) {
 
   localStorage.setItem(LEADERBOARD_KEY, JSON.stringify(top10));
 }
-
 
 // Load leaderboard
 export function loadLeaderboard() {

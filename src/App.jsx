@@ -1,10 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import './App.css';
-import Modal from './Components/Modal';
+import React, { useState, useEffect } from "react";
+import "./App.css";
+import Modal from "./Components/Modal";
 import LeaderBoardModal from "./Components/LeaderBoard";
+import { persistHighestScore } from "./features/leaderboard/leaderboardSlice";
 
-import { saveLastScore, saveHighestScore, saveToLeaderboard } from "./Components/LeaderBoardStore";
-
+import {
+  saveLastScore,
+  saveHighestScore,
+  saveToLeaderboard,
+} from "./Components/LeaderBoardStore";
+import { useDispatch } from "react-redux";
 
 const GRID_SIZE = 10;
 const INITIAL_SNAKE = [
@@ -22,20 +27,20 @@ const DIRECTIONS = {
 
 function App() {
   const [snake, setSnake] = useState(INITIAL_SNAKE);
-  const [direction, setDirection] = useState('ArrowRight');
+  const [direction, setDirection] = useState("ArrowRight");
   // const directionRef = useRef(direction);
   // directionRef.current = direction;
   const [food, setFood] = useState([4, 6]);
   const [gameover, setGameover] = useState(false);
   const [score, setscore] = useState(0);
+  const dispatch = useDispatch();
 
   const [isLeaderboardOpen, setIsLeaderboardOpen] = useState(false);
 
   const isSnakeCell = (row, col) =>
     snake.some(([r, c]) => r === row && c === col);
 
-  const isFoodCell = (row, col) =>
-    food[0] == row && food[1] === col;
+  const isFoodCell = (row, col) => food[0] == row && food[1] === col;
 
   useEffect(() => {
     const handleKey = (e) => {
@@ -55,22 +60,18 @@ function App() {
         return;
       }
 
-      setDirection((prevDir) =>
-        prevDir !== newDir ? newDir : prevDir
-      );
+      setDirection((prevDir) => (prevDir !== newDir ? newDir : prevDir));
     };
 
-
-    window.addEventListener('keydown', handleKey);
-    return () => window.removeEventListener('keydown', handleKey);
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
   }, [snake]);
 
   useEffect(() => {
-    console.log("direc")
+    console.log("direc");
     const interval = setInterval(() => {
-
       if (gameover) return;
-      console.log("prev")
+      console.log("prev");
       setSnake((prev) => {
         const [headRow, headCol] = prev[0];
         const [dRow, dCol] = DIRECTIONS[direction];
@@ -86,16 +87,19 @@ function App() {
         const newHead = [newRow, newCol];
         const hasEaten = food[0] === newRow && food[1] === newCol;
 
-
         const newSnake = hasEaten
           ? [newHead, ...prev]
           : [newHead, ...prev.slice(0, -1)];
 
         if (hasEaten) {
+          console.log(food, "previous food ");
+          console.log(prev[0], "previous snake head");
           setscore((prevScore) => {
+            persistHighestScore(prevScore + 1)(dispatch)
             console.log(prevScore);
+
             return prevScore + 1;
-          })
+          });
           let newFood;
           do {
             newFood = [
@@ -103,7 +107,9 @@ function App() {
               Math.floor(Math.random() * GRID_SIZE),
             ];
           } while (
-            newSnake.some(([row, col]) => row === newFood[0] && col === newFood[1])
+            newSnake.some(
+              ([row, col]) => row === newFood[0] && col === newFood[1]
+            )
           );
           setFood(newFood);
         }
@@ -111,9 +117,7 @@ function App() {
         const body = prev.slice(1);
 
         if (body.some(([r, c]) => r === newRow && c === newCol)) {
-
           setGameover(true);
-
 
           saveLastScore(score);
           saveHighestScore(score);
@@ -122,16 +126,14 @@ function App() {
           setIsLeaderboardOpen(true);
 
           return prev;
-
         }
-
 
         return newSnake;
       });
     }, 300);
 
     return () => clearInterval(interval);
-  }, [direction]);
+  }, [direction, food]);
 
   return (
     <div className="game-container">
@@ -141,17 +143,16 @@ function App() {
           [...Array(GRID_SIZE)].map((_, col) => (
             <div
               key={`${row}-${col}`}
-              className={`cell ${isSnakeCell(row, col)
-                ? 'snake'
-                : isFoodCell(row, col)
-                  ? 'food'
-                  : ''
-                }`}
-
+              className={`cell ${
+                isSnakeCell(row, col)
+                  ? "snake"
+                  : isFoodCell(row, col)
+                  ? "food"
+                  : ""
+              }`}
             ></div>
           ))
         )}
-
       </div>
       {gameover && (
         <LeaderBoardModal
@@ -167,7 +168,6 @@ function App() {
         />
       )}
 
-
       <LeaderBoardModal
         isOpen={isLeaderboardOpen}
         onPlayAgain={() => {
@@ -179,7 +179,6 @@ function App() {
           setIsLeaderboardOpen(false);
         }}
       />
-
     </div>
   );
 }
