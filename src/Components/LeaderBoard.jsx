@@ -19,9 +19,16 @@ function LeaderboardModal({ isOpen, onPlayAgain }) {
     <div className="modal-backdrop">
       <div className="modal">
         <h2 style={{ color: "red" }}>Game Over</h2>
-        <p>Your Score: {lastScore}</p>
-        <p>Highest Score: {highestScore}</p>
-         <h3>Leaderboard</h3>
+        <p>
+          Your Score: {lastScore}
+          {lastScore === highestScore && " 🏆"}
+        </p>
+
+        <p>
+          Highest Score 🏆 : {highestScore}
+        </p>
+
+        <h3>Leaderboard</h3>
         <ol>
           {leaderboard.map((entry, index) => (
             <li key={index}>
@@ -38,8 +45,8 @@ function LeaderboardModal({ isOpen, onPlayAgain }) {
 
 export default LeaderboardModal;
 
-       
 
 
-       
+
+
 

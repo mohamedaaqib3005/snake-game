@@ -16,6 +16,7 @@ export function saveLastScore(score) {
 
 export function loadLastScore() {
   return parseInt(localStorage.getItem(LAST_SCORE_KEY)) || 0;
+  
 }
 
 export function saveHighestScore(score) {

@@ -2,8 +2,9 @@ import React, { useState, useEffect } from "react";
 import "./App.css";
 import Modal from "./Components/Modal";
 import LeaderBoardModal from "./Components/LeaderBoard";
-import { persistHighestScore } from "./features/leaderboard/leaderboardSlice";
-
+// import { persistHighestScore } from "./features/leaderboard/leaderboardSlice";
+import { persistHighestScore, persistLastScore } from "./features/leaderboard/leaderboardSlice";
+import { persistAddToLeaderboard } from "./features/leaderboard/leaderboardSlice";
 import {
   saveLastScore,
   saveHighestScore,
@@ -95,7 +96,7 @@ function App() {
           console.log(food, "previous food ");
           console.log(prev[0], "previous snake head");
           setscore((prevScore) => {
-            persistHighestScore(prevScore + 1)(dispatch)
+            dispatch(persistHighestScore(prevScore + 1))
             console.log(prevScore);
 
             return prevScore + 1;
@@ -117,11 +118,12 @@ function App() {
         const body = prev.slice(1);
 
         if (body.some(([r, c]) => r === newRow && c === newCol)) {
+          dispatch(persistLastScore(score))
+          dispatch(persistAddToLeaderboard({ score}))
           setGameover(true);
-
           saveLastScore(score);
           saveHighestScore(score);
-          saveToLeaderboard("Player", score);
+          saveToLeaderboard( score);
 
           setIsLeaderboardOpen(true);
 
@@ -184,3 +186,5 @@ function App() {
 }
 
 export default App;
+
+
