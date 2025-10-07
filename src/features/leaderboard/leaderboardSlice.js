@@ -19,7 +19,7 @@ const initialState = {
 
   highestScore: 0,
 
-  leaderboard: [],
+  [LEADERBOARD_KEY]: [],
 };
 
 const leaderboardSlice = createSlice({
@@ -68,25 +68,6 @@ export const {
 
 export default leaderboardSlice.reducer;
 
-
-export const hydrateLeaderboard = () => (dispatch) => {
-  const rawLast = localStorage.getItem(LAST_SCORE_KEY);
-  const rawHigh = localStorage.getItem(HIGH_SCORE_KEY);
-  const rawBoard = localStorage.getItem(LEADERBOARD_KEY);
-
-  const last = (Number.isFinite(Number(rawLast))) ? parseInt(rawLast, 10) : 0;
-  const high = (Number.isFinite(Number(rawHigh))) ? parseInt(rawHigh, 10) : 0;
-
-  const board = safeParseJSON(rawBoard, []).sort((a, b) => b.score - a.score);
-
-  dispatch(setLastScore(last));
-
-  dispatch(setHighestScore(high));
-
-  dispatch(setLeaderboard(board));
-
-}
-
 export const persistLastScore = (score) => (dispatch) => {
   localStorage.setItem(LAST_SCORE_KEY, String(score));
   console.log(LAST_SCORE_KEY)
@@ -112,17 +93,15 @@ export const persistAddToLeaderboard = ({  score }) => (dispatch) => {
   const sorted = [...current].sort((a, b) => b.score - a.score);
   const qualifies = sorted.length < 10 || score > sorted[sorted.length - 1].score;
 
-  if (qualifies){
-    var name = prompt("Congrats! You made the Top 10  Enter your name:");
-    // dispatch(persistAddToLeaderboard({name,score}))
-  }
+  if (!qualifies) return ;
+  var name = prompt("Congrats! You made the Top 10  Enter your name:");
 
   const updated = [...sorted, { name, score }]
     .sort((a, b) => b.score - a.score)
     .slice(0, 10);
 
   localStorage.setItem(LEADERBOARD_KEY, JSON.stringify(updated));
-  
+
    dispatch(setLeaderboard(updated));
    dispatch(setHighestScore(score));
 };

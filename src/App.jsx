@@ -71,7 +71,7 @@ function App() {
   useEffect(() => {
     console.log("direc");
     const interval = setInterval(() => {
-      if (gameover) return;
+      if (gameover) return clearInterval(interval);
       console.log("prev");
       setSnake((prev) => {
         const [headRow, headCol] = prev[0];
@@ -117,13 +117,13 @@ function App() {
 
         const body = prev.slice(1);
 
-        if (body.some(([r, c]) => r === newRow && c === newCol)) {
+        if (body.some(([r, c]) => r === newRow && c === newCol) && isLeaderboardOpen === false) {
           dispatch(persistLastScore(score))
           dispatch(persistAddToLeaderboard({ score}))
           setGameover(true);
           saveLastScore(score);
-          saveHighestScore(score);
-          saveToLeaderboard( score);
+          // saveHighestScore(score);
+          // saveToLeaderboard( score);
 
           setIsLeaderboardOpen(true);
 
@@ -135,7 +135,7 @@ function App() {
     }, 300);
 
     return () => clearInterval(interval);
-  }, [direction, food]);
+  }, [direction, gameover,food]);
 
   return (
     <div className="game-container">
