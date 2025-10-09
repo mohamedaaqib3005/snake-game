@@ -2,14 +2,16 @@ import React, { useState, useEffect } from "react";
 import "./App.css";
 import Modal from "./Components/Modal";
 import LeaderBoardModal from "./Components/LeaderBoard";
-// import { persistHighestScore } from "./features/leaderboard/leaderboardSlice";
-import { persistHighestScore, persistLastScore } from "./features/leaderboard/leaderboardSlice";
-import { persistAddToLeaderboard } from "./features/leaderboard/leaderboardSlice";
 import {
-  saveLastScore,
-  saveHighestScore,
-  saveToLeaderboard,
-} from "./Components/LeaderBoardStore";
+  persistHighestScore,
+  persistLastScore,
+  persistAddToLeaderboard,
+} from "./features/leaderboard/leaderboardSlice";
+// import {
+//   saveLastScore,
+//   saveHighestScore,
+//   saveToLeaderboard,
+// } from "./Components/LeaderBoardStore";
 import { useDispatch } from "react-redux";
 
 const GRID_SIZE = 10;
@@ -119,13 +121,15 @@ function App() {
 
         if (body.some(([r, c]) => r === newRow && c === newCol) && isLeaderboardOpen === false) {
           dispatch(persistLastScore(score))
-          dispatch(persistAddToLeaderboard({ score}))
+          dispatch(persistAddToLeaderboard({ score }))
+          dispatch(persistHighestScore(updatedScore));
           setGameover(true);
-          saveLastScore(score);
+          setIsLeaderboardOpen(true);
+
+          // saveLastScore(score);
           // saveHighestScore(score);
           // saveToLeaderboard( score);
 
-          setIsLeaderboardOpen(true);
 
           return prev;
         }
@@ -135,7 +139,7 @@ function App() {
     }, 300);
 
     return () => clearInterval(interval);
-  }, [direction, gameover,food]);
+  }, [direction, gameover, food]);
 
   return (
     <div className="game-container">
@@ -145,13 +149,12 @@ function App() {
           [...Array(GRID_SIZE)].map((_, col) => (
             <div
               key={`${row}-${col}`}
-              className={`cell ${
-                isSnakeCell(row, col)
-                  ? "snake"
-                  : isFoodCell(row, col)
+              className={`cell ${isSnakeCell(row, col)
+                ? "snake"
+                : isFoodCell(row, col)
                   ? "food"
                   : ""
-              }`}
+                }`}
             ></div>
           ))
         )}

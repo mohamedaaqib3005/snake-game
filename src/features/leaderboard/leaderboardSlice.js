@@ -36,7 +36,7 @@ const leaderboardSlice = createSlice({
     setHighestScore(state, action) {
       if (state.leaderboard.length > 0) {
         const topScore = state.leaderboard[0].score;
-        console.log({topScore})
+        console.log({ topScore })
         state.highestScore = Math.max(state.highestScore, topScore);
       }
     },
@@ -86,14 +86,14 @@ export const persistHighestScore = (score) => (dispatch) => {
   // }
 };
 
-export const persistAddToLeaderboard = ({  score }) => (dispatch) => {
+export const persistAddToLeaderboard = ({ score }) => (dispatch) => {
   const rawBoard = localStorage.getItem(LEADERBOARD_KEY);
   const current = safeParseJSON(rawBoard, []);
   console.log(current);
   const sorted = [...current].sort((a, b) => b.score - a.score);
   const qualifies = sorted.length < 10 || score > sorted[sorted.length - 1].score;
 
-  if (!qualifies) return ;
+  if (!qualifies) return;
   var name = prompt("Congrats! You made the Top 10  Enter your name:");
 
   const updated = [...sorted, { name, score }]
@@ -102,7 +102,7 @@ export const persistAddToLeaderboard = ({  score }) => (dispatch) => {
 
   localStorage.setItem(LEADERBOARD_KEY, JSON.stringify(updated));
 
-   dispatch(setLeaderboard(updated));
-   dispatch(setHighestScore(score));
+  dispatch(setLeaderboard(updated));
+  dispatch(setHighestScore(score));
 };
 
