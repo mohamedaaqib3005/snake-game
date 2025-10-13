@@ -27,8 +27,6 @@ const DIRECTIONS = {
 function App() {
   const [snake, setSnake] = useState(INITIAL_SNAKE);
   const [direction, setDirection] = useState("ArrowRight");
-  // const directionRef = useRef(direction);
-  // directionRef.current = direction;
   const [food, setFood] = useState([4, 6]);
   const [gameover, setGameover] = useState(false);
   const [score, setscore] = useState(0);
@@ -121,10 +119,6 @@ function App() {
           dispatch(persistHighestScore(updatedScore));
           setGameover(true);
           setIsLeaderboardOpen(true);
-
-
-
-
           return prev;
         }
 
