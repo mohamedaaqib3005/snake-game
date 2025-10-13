@@ -1,11 +1,4 @@
-// custom hook 
-// dont store derived state in use effect
-// xstate 
-// grokking simplicity 
-// project react cosden solutions
-// use debugger not console.log console debug console.info 
-// https://overreacted.io/
-// src/Components/LeaderBoard.jsx
+
 import React from "react";
 import { useSelector } from "react-redux";
 import "../styles/LeaderBoard.css";

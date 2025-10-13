@@ -75,15 +75,13 @@ export const persistLastScore = (score) => (dispatch) => {
 };
 
 export const persistHighestScore = (score) => (dispatch) => {
-  // const currentHigh = getState().leaderboard.highestScore;
 
-  // if (score > currentHigh) {
 
   localStorage.setItem(HIGH_SCORE_KEY, String(score));
 
   dispatch(setHighestScore(score));
 
-  // }
+ 
 };
 
 export const persistAddToLeaderboard = ({ score }) => (dispatch) => {

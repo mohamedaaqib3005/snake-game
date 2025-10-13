@@ -7,11 +7,7 @@ import {
   persistLastScore,
   persistAddToLeaderboard,
 } from "./features/leaderboard/leaderboardSlice";
-// import {
-//   saveLastScore,
-//   saveHighestScore,
-//   saveToLeaderboard,
-// } from "./Components/LeaderBoardStore";
+
 import { useDispatch } from "react-redux";
 
 const GRID_SIZE = 10;
@@ -126,9 +122,7 @@ function App() {
           setGameover(true);
           setIsLeaderboardOpen(true);
 
-          // saveLastScore(score);
-          // saveHighestScore(score);
-          // saveToLeaderboard( score);
+
 
 
           return prev;
